@@ -1,0 +1,10 @@
+{
+  "name": "gnss-web-console",
+  "version": "0.1.0",
+  "private": true,
+  "description": "GNSS网页版上位机本地原型",
+  "scripts": {
+    "dev": "node server.js",
+    "check": "node --check app.js && node --check server.js"
+  }
+}
