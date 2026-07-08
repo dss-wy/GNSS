@@ -1,13 +1,29 @@
-# GNSS网页版上位机
+# CORVON TOF
 
-这是参考 `iNavTool_V4284.exe` 工作台布局制作的本地网页版原型，当前包含：
+CORVON TOF 是面向客户现场调试和模块验证的网页上位机网站。当前网站包含 GNSS/NMEA/UBX 数据查看、串口连接、卫星信号、消息解析、散点图、地图定位和在线说明书。
 
-- NMEA视图
-- 卫星视图
-- 信号视图
-- 消息视图
-- 散点图
-- 地图视图
+## 客户访问
+
+GitHub Pages 发布后，客户可以打开：
+
+```text
+https://dss-wy.github.io/GNSS/
+```
+
+网站入口：
+
+- `index.html`：客户网站首页
+- `tool.html`：网页版上位机工具页
+- `CORVON GNSS Tool操作说明书v1.0.pdf`：在线操作说明书
+
+## 浏览器要求
+
+真实串口连接依赖浏览器 Web Serial API，建议客户使用：
+
+- Microsoft Edge
+- Google Chrome
+
+在线访问 GitHub Pages 时为 HTTPS；现场调试也可以通过本地服务 `http://127.0.0.1:5173/tool.html` 使用。
 
 ## 本地运行
 
@@ -16,29 +32,60 @@ cd F:\dss\V4284\GNSS网页版上位机
 npm run dev
 ```
 
-启动后访问控制台输出的本地地址，通常是：
+启动后访问：
 
 ```text
-http://127.0.0.1:5173
+http://127.0.0.1:5173/
 ```
 
-如果 PowerShell 提示 `npm.ps1` 被执行策略禁止，可以直接运行：
+也可以直接双击：
+
+```text
+打开GNSS网页版.bat
+```
+
+## GitHub Pages 首次设置
+
+仓库地址：
+
+```text
+https://github.com/dss-wy/GNSS
+```
+
+首次发布时，在 GitHub 仓库里设置：
+
+1. 打开 `Settings`
+2. 进入 `Pages`
+3. `Source` 选择 `GitHub Actions`
+4. 保存后推送 `main` 分支
+5. 在 `Actions` 页面等待 `Deploy CORVON TOF` 成功
+
+发布流程只会上传客户网站需要的静态文件：`index.html`、`tool.html`、脚本、样式、图标、PDF 说明书和 `assets` 资源目录。
+
+## 更新发布
+
+以后更新网站只需要提交并推送：
 
 ```powershell
-node server.js
+cd F:\dss\V4284\GNSS网页版上位机
+git status
+git add .
+git commit -m "发布 CORVON TOF 网站更新"
+git push origin main
 ```
 
-只查看界面和示例回放时，也可以直接用浏览器打开 `index.html`。真实串口建议用本地服务方式访问。
+推送成功后，GitHub Actions 会自动发布到：
+
+```text
+https://dss-wy.github.io/GNSS/
+```
 
 ## 当前能力
 
-- 内置示例NMEA数据，可直接查看六个视图联动。
-- 支持加载本地 `.txt`、`.log`、`.nmea` 文件做回放解析。
-- 支持浏览器 Web Serial API 打开串口，建议使用 Chrome 或 Edge。
-- 支持解析 `GGA`、`RMC`、`GLL`、`GSA`、`GSV`、`VTG` 常用NMEA语句。
-
-## 后续建议
-
-1. 接入真实接收机串口，确认波特率和NMEA输出频率。
-2. 用真实日志补充解析边界测试。
-3. 增加设备配置、日志保存、地图瓦片源、回放进度条。
+- 支持浏览器串口打开和关闭
+- 支持自动识别波特率
+- 支持 NMEA、UBX、信号、消息、散点图和地图视图
+- 支持视图最小化、恢复、拖动、拉伸和 Reset 恢复默认布局
+- 支持中文/英文界面切换
+- 支持浅色/深色背景
+- 支持在线查看 PDF 操作说明书

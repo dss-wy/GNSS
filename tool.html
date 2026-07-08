@@ -1,0 +1,246 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CORVON TOF</title>
+    <link rel="icon" href="./CORVON.ico?v=1" type="image/x-icon" />
+    <link rel="shortcut icon" href="./CORVON.ico?v=1" type="image/x-icon" />
+    <link rel="stylesheet" href="./styles.css?v=24" />
+  </head>
+  <body>
+    <div class="app-shell">
+      <header class="top-shell">
+        <nav class="menu-tabs" aria-label="主菜单" data-i18n-attr="aria-label:nav.main">
+          <button id="connectionTab" class="menu-tab active" data-i18n="nav.connection">连接</button>
+          <button id="viewTab" class="menu-tab" data-i18n="nav.view" aria-expanded="false">视图</button>
+          <button class="menu-tab" data-i18n="nav.tools">工具</button>
+          <button class="menu-tab" data-i18n="nav.replay">回放</button>
+          <button id="settingsTab" class="menu-tab" data-i18n="nav.settings">设置</button>
+          <button id="helpTab" class="menu-tab" data-i18n="nav.help" aria-expanded="false">帮助</button>
+        </nav>
+        <div class="tool-strip">
+          <div id="connectionTools" class="toolbar-page connection-tools">
+            <button id="connectButton" class="primary-action">打开串口</button>
+            <label class="field-inline">
+              <span data-i18n="toolbar.baudRate">波特率</span>
+              <select id="baudRate">
+                <option value="auto" selected data-i18n="toolbar.autoDetect">自动识别</option>
+                <option value="9600">9600</option>
+                <option value="38400">38400</option>
+                <option value="57600">57600</option>
+                <option value="115200">115200</option>
+                <option value="230400">230400</option>
+              </select>
+            </label>
+            <span id="deviceModeState" class="device-mode-state">模块未识别</span>
+            <button id="restoreDefaultButton" data-i18n="toolbar.restoreDefault">恢复默认输出</button>
+            <button id="pauseButton" data-i18n="toolbar.pause">暂停</button>
+            <button id="loadFileButton" data-i18n="toolbar.loadLog">加载日志</button>
+            <button id="clearButton" data-i18n="toolbar.clear">清空</button>
+            <input id="fileInput" type="file" accept=".txt,.log,.nmea,.csv" />
+          </div>
+          <div id="viewTools" class="toolbar-page view-tools" hidden></div>
+          <div id="helpTools" class="toolbar-page help-tools" hidden>
+            <button id="manualButton" type="button" data-i18n="help.manual">CORVON GNSS Tool手册</button>
+          </div>
+        </div>
+      </header>
+
+      <main class="workspace">
+        <div id="portStatusBanner" class="port-status-banner" role="alert" style="display:none">
+          <span class="port-status-icon"></span>
+          <span id="portStatusMessage" class="port-status-message"></span>
+          <button id="portStatusAction" class="port-status-action" data-i18n="common.retry">重试</button>
+        </div>
+
+        <section class="panel nmea-panel">
+          <div class="panel-title">
+            <span data-icon="nmea" data-i18n="panel.nmea">NMEA视图</span>
+            <div class="window-tools"><button></button><button></button><button></button></div>
+          </div>
+          <div class="nmea-output" id="nmeaLog"></div>
+          <div class="send-row">
+            <select id="commandMode" aria-label="发送格式" data-i18n-attr="aria-label:nmea.sendMode">
+              <option value="ascii">ascii</option>
+              <option value="hex">hex</option>
+            </select>
+            <input id="commandInput" type="text" aria-label="发送内容" data-i18n-attr="aria-label:nmea.sendContent" />
+            <button id="sendButton" data-i18n="common.send">发送</button>
+          </div>
+          <div class="nmea-status-row">
+            <span id="nmeaSummary">频率：0 Hz</span>
+          </div>
+        </section>
+
+        <section class="panel satellite-panel">
+          <div class="panel-title">
+            <span data-icon="ubx" data-i18n="panel.ubx">UBX视图</span>
+            <div class="window-tools"><button></button><button></button><button></button></div>
+          </div>
+          <div class="ubx-view">
+            <pre class="ubx-output" id="ubxLog"></pre>
+            <div class="ubx-status-row">
+              <span id="ubxSummary">频率：0 Hz</span>
+              <button id="ubxClearButton" data-i18n="toolbar.clear">清空</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel signal-panel">
+          <div class="panel-title">
+            <span data-icon="signal" data-i18n="panel.signal">信号视图</span>
+            <div class="window-tools"><button></button><button></button><button></button></div>
+          </div>
+          <div class="signal-legend" id="signalLegend"></div>
+          <div class="canvas-wrap">
+            <canvas id="signalCanvas"></canvas>
+          </div>
+        </section>
+
+        <section class="panel message-panel">
+          <div class="panel-title">
+            <span data-icon="message" data-i18n="panel.message">消息视图</span>
+            <div class="window-tools"><button></button><button></button><button></button></div>
+          </div>
+          <div class="message-layout">
+            <aside class="message-tree">
+              <div class="tree-root">NMEA</div>
+              <button data-type="GGA"><span class="message-type-label" data-i18n="message.type.gga">GGA（全球定位系统定位信息）</span></button>
+              <button data-type="GLL"><span class="message-type-label" data-i18n="message.type.gll">GLL（地理定位-纬度/经度）</span></button>
+              <button data-type="GSA"><span class="message-type-label" data-i18n="message.type.gsa">GSA（当前卫星信息）</span></button>
+              <button data-type="GSV" class="active"><span class="message-type-label" data-i18n="message.type.gsv">GSV（可见卫星信息）</span></button>
+              <button data-type="RMC"><span class="message-type-label" data-i18n="message.type.rmc">RMC（推荐定位信息）</span></button>
+              <button data-type="VTG"><span class="message-type-label" data-i18n="message.type.vtg">VTG（地面航向和地面速度）</span></button>
+              <div class="tree-root muted">ICOE</div>
+            </aside>
+            <div id="messageSplitHandle" class="message-splitter" role="separator" aria-orientation="vertical" tabindex="0"></div>
+            <div class="satellite-table-wrap">
+              <div class="message-detail" id="messageDetail"></div>
+              <div class="visible-count"><span data-i18n="message.visibleSatellites">可视卫星数：</span><strong id="visibleSatelliteCount">0</strong></div>
+              <table class="satellite-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="table.system">卫星系统</th>
+                    <th data-i18n="table.prn">卫星号</th>
+                    <th data-i18n="table.elevation">高度角</th>
+                    <th data-i18n="table.azimuth">方位角</th>
+                    <th data-i18n="table.snr">信噪比</th>
+                  </tr>
+                </thead>
+                <tbody id="satelliteRows"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+        <section class="panel scatter-panel">
+          <div class="panel-title">
+            <span data-icon="scatter" data-i18n="panel.scatter">散点图</span>
+            <div class="window-tools"><button></button><button></button><button></button></div>
+          </div>
+          <div class="scatter-layout">
+            <div class="canvas-wrap">
+              <canvas id="scatterCanvas"></canvas>
+            </div>
+            <aside class="scatter-controls">
+              <label><input type="radio" name="centerMode" value="mouse" />MouseClick</label>
+              <label><input type="radio" name="centerMode" value="current" checked />CenterToCurrent</label>
+              <label><input type="radio" name="centerMode" value="specified" />SpecifiedCenter</label>
+              <label>Lon:<input id="centerLon" type="text" /></label>
+              <label>Lat:<input id="centerLat" type="text" /></label>
+              <button id="applyCenterButton" disabled data-i18n="common.apply">Apply</button>
+              <button id="saveScatterButton" data-i18n="common.save">保存</button>
+              <button id="clearScatterButton" data-i18n="common.clear">清除</button>
+            </aside>
+          </div>
+        </section>
+
+        <section class="panel map-panel">
+          <div class="panel-title">
+            <span data-icon="map" data-i18n="panel.map">地图视图</span>
+            <div class="window-tools"><button></button><button></button><button></button></div>
+          </div>
+          <div class="map-layout">
+            <form class="position-form">
+              <label><span data-i18n="map.utc">UTC</span><input id="utcValue" readonly /></label>
+              <label><span data-i18n="map.lon">经度</span><input id="lonValue" readonly /></label>
+              <label><span data-i18n="map.lat">纬度</span><input id="latValue" readonly /></label>
+              <label><span data-i18n="map.altitude">高程</span><input id="altValue" readonly /></label>
+              <label><span data-i18n="map.speed">速度</span><input id="speedValue" readonly /></label>
+              <label><span data-i18n="map.course">朝向</span><input id="courseValue" readonly /></label>
+              <label><span data-i18n="map.satellites">卫星</span><input id="satCountValue" readonly /></label>
+              <label><span data-i18n="map.hdop">HDOP</span><input id="hdopValue" readonly /></label>
+              <label><span data-i18n="map.vdop">VDOP</span><input id="vdopValue" readonly /></label>
+              <label><span data-i18n="map.mode">模式</span><input id="modeValue" readonly /></label>
+            </form>
+            <div class="map-stage">
+              <canvas id="mapCanvas"></canvas>
+              <div class="map-zoom">
+                <button id="zoomInButton">+</button>
+                <button id="zoomOutButton">-</button>
+              </div>
+              <div class="map-mode">
+                <label><input type="radio" name="mapMode" value="road" checked /><span data-i18n="map.road">Road Map</span></label>
+                <label><input type="radio" name="mapMode" value="satellite" /><span data-i18n="map.satellite">Satellite</span></label>
+              </div>
+            </div>
+          </div>
+        </section>
+      </main>
+
+      <aside class="side-toolbox" aria-label="扩展工具" data-i18n-attr="aria-label:side.tools">
+        <button>UTC<br />SOW</button>
+        <button>IC</button>
+        <button>IMU</button>
+        <button id="sideResetButton" data-i18n="side.reset" aria-describedby="resetTooltip">Reset</button>
+        <button>BLH<br />XYZ</button>
+        <button>Iono</button>
+        <button>RTCM</button>
+      </aside>
+
+      <footer class="status-bar">
+        <div id="connectionState">未连接</div>
+        <div id="logState" data-i18n="status.logUnsaved">日志未保存</div>
+        <div id="sourceState" data-i18n="status.noObservation">观测量未输出</div>
+        <div id="debugState" data-i18n="status.noDebugLog">调试log未输出</div>
+        <div class="led" id="statusLed"></div>
+        <div id="fixState" data-i18n="status.noFix">未定位</div>
+        <div id="idleState">空闲</div>
+        <div id="epochState">-1/0</div>
+        <div id="runtimeState">运行时间00:00:00</div>
+      </footer>
+    </div>
+
+    <div id="resetTooltip" class="reset-tooltip" role="tooltip" hidden>
+      <div class="reset-tooltip-title" data-i18n="side.resetTitle">恢复默认界面</div>
+      <div class="reset-tooltip-text" data-i18n="side.resetTip">恢复所有视图到默认布局</div>
+    </div>
+
+    <div id="settingsBackdrop" class="settings-backdrop" hidden></div>
+    <section id="settingsDialog" class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden>
+      <div class="settings-titlebar">
+        <h2 id="settingsTitle" data-i18n="settings.title">设置</h2>
+        <button id="settingsCloseButton" type="button" class="settings-close" aria-label="关闭" data-i18n-attr="aria-label:common.close">×</button>
+      </div>
+      <div class="settings-body">
+        <div class="settings-group">
+          <div class="settings-label" data-i18n="settings.language">语言</div>
+          <div class="segmented-control" role="group" aria-label="语言" data-i18n-attr="aria-label:settings.language">
+            <button id="languageZhButton" type="button" data-language="zh" data-i18n="settings.languageZh">中文</button>
+            <button id="languageEnButton" type="button" data-language="en" data-i18n="settings.languageEn">English</button>
+          </div>
+        </div>
+        <div class="settings-group">
+          <div class="settings-label" data-i18n="settings.theme">背景</div>
+          <div class="segmented-control" role="group" aria-label="背景" data-i18n-attr="aria-label:settings.theme">
+            <button id="themeLightButton" type="button" data-theme-value="light" data-i18n="settings.light">浅色</button>
+            <button id="themeDarkButton" type="button" data-theme-value="dark" data-i18n="settings.dark">深色</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <script src="./app.js?v=23" defer></script>
+  </body>
+</html>

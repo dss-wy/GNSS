@@ -3,199 +3,141 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>GNSS网页版上位机</title>
-    <link rel="stylesheet" href="./styles.css" />
+    <title>CORVON TOF</title>
+    <link rel="icon" href="./CORVON.ico?v=1" type="image/x-icon" />
+    <link rel="shortcut icon" href="./CORVON.ico?v=1" type="image/x-icon" />
+    <link rel="stylesheet" href="./site.css?v=1" />
   </head>
   <body>
-    <div class="app-shell">
-      <header class="top-shell">
-        <nav class="menu-tabs" aria-label="主菜单">
-          <button class="menu-tab active">连接</button>
-          <button class="menu-tab">视图</button>
-          <button class="menu-tab">工具</button>
-          <button class="menu-tab">回放</button>
-          <button class="menu-tab">设置</button>
-          <button class="menu-tab">帮助</button>
-        </nav>
-        <div class="tool-strip">
-          <button id="connectButton" class="primary-action">打开串口</button>
-          <button id="disconnectButton">断开</button>
-          <label class="field-inline">
-            <span>波特率</span>
-            <select id="baudRate">
-              <option value="9600" selected>9600</option>
-              <option value="38400">38400</option>
-              <option value="57600">57600</option>
-              <option value="115200">115200</option>
-              <option value="230400">230400</option>
-            </select>
-          </label>
-          <button id="replayButton">示例回放</button>
-          <button id="pauseButton">暂停</button>
-          <button id="loadFileButton">加载日志</button>
-          <button id="clearButton">清空</button>
-          <input id="fileInput" type="file" accept=".txt,.log,.nmea,.csv" />
+    <header class="site-header">
+      <a class="brand" href="./index.html" aria-label="CORVON TOF">
+        <img src="./CORVON.ico" alt="" />
+        <span>CORVON TOF</span>
+      </a>
+      <nav class="site-nav" aria-label="网站导航">
+        <a href="./tool.html">网页版上位机</a>
+        <a href="./CORVON%20GNSS%20Tool%E6%93%8D%E4%BD%9C%E8%AF%B4%E6%98%8E%E4%B9%A6v1.0.pdf">操作说明书</a>
+        <a href="#requirements">运行要求</a>
+      </nav>
+    </header>
+
+    <main>
+      <section class="hero">
+        <div class="hero-content">
+          <p class="eyebrow">GNSS Web Console</p>
+          <h1>CORVON TOF</h1>
+          <p class="hero-copy">
+            面向客户现场调试和模块验证的网页版 GNSS 上位机，支持串口连接、NMEA/UBX 数据查看、卫星信号、消息解析、散点图和地图定位。
+          </p>
+          <div class="hero-actions">
+            <a class="primary-link" href="./tool.html">打开网页版上位机</a>
+            <a class="secondary-link" href="./CORVON%20GNSS%20Tool%E6%93%8D%E4%BD%9C%E8%AF%B4%E6%98%8E%E4%B9%A6v1.0.pdf">查看操作说明书</a>
+          </div>
         </div>
-      </header>
-
-      <main class="workspace">
-        <section class="panel nmea-panel">
-          <div class="panel-title">
-            <span>NMEA视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
+        <div class="hero-panel" aria-label="工具能力概览">
+          <div class="status-line">
+            <span class="led"></span>
+            <span>Web Serial Ready</span>
           </div>
-          <div class="nmea-output" id="nmeaLog"></div>
-          <div class="send-row">
-            <select id="commandMode" aria-label="发送格式">
-              <option value="ascii">ascii</option>
-              <option value="hex">hex</option>
-            </select>
-            <input id="commandInput" type="text" aria-label="发送内容" />
-            <button id="sendButton">发送</button>
+          <div class="metrics">
+            <div><strong>NMEA</strong><span>实时语句</span></div>
+            <div><strong>UBX</strong><span>协议数据</span></div>
+            <div><strong>Map</strong><span>定位视图</span></div>
           </div>
-        </section>
-
-        <section class="panel satellite-panel">
-          <div class="panel-title">
-            <span>卫星视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
-          </div>
-          <div class="satellite-filter">
-            <label><input type="checkbox" data-system="GPS" checked /><span class="dot gps"></span>GPS</label>
-            <label><input type="checkbox" data-system="GLC" checked /><span class="dot glc"></span>GLC</label>
-            <label><input type="checkbox" data-system="GAI" checked /><span class="dot gai"></span>GAI</label>
-            <label><input type="checkbox" data-system="BDS" checked /><span class="dot bds"></span>BDS</label>
-            <label><input type="checkbox" data-system="IRN" checked /><span class="dot irn"></span>IRN</label>
-            <label><input type="checkbox" id="inViewOnly" />InView</label>
-          </div>
-          <div class="canvas-wrap">
-            <canvas id="skyCanvas"></canvas>
-          </div>
-        </section>
-
-        <section class="panel signal-panel">
-          <div class="panel-title">
-            <span>信号视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
-          </div>
-          <div class="signal-legend" id="signalLegend"></div>
-          <div class="canvas-wrap">
-            <canvas id="signalCanvas"></canvas>
-          </div>
-        </section>
-
-        <section class="panel message-panel">
-          <div class="panel-title">
-            <span>消息视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
-          </div>
-          <div class="message-layout">
-            <aside class="message-tree">
-              <div class="tree-root">NMEA</div>
-              <button data-type="GGA">GGA（全球定位系统定位信息）<span id="countGGA">0</span></button>
-              <button data-type="GLL">GLL（地理定位-纬度/经度）<span id="countGLL">0</span></button>
-              <button data-type="GSA">GSA（当前卫星信息）<span id="countGSA">0</span></button>
-              <button data-type="GSV" class="active">GSV（可见卫星信息）<span id="countGSV">0</span></button>
-              <button data-type="RMC">RMC（推荐定位信息）<span id="countRMC">0</span></button>
-              <button data-type="VTG">VTG（地面航向和地面速度）<span id="countVTG">0</span></button>
-              <div class="tree-root muted">ICOE</div>
-            </aside>
-            <div class="satellite-table-wrap">
-              <div class="visible-count">可视卫星数：<strong id="visibleSatelliteCount">0</strong></div>
-              <table class="satellite-table">
-                <thead>
-                  <tr>
-                    <th>卫星系统</th>
-                    <th>卫星号</th>
-                    <th>高度角</th>
-                    <th>方位角</th>
-                    <th>信噪比</th>
-                  </tr>
-                </thead>
-                <tbody id="satelliteRows"></tbody>
-              </table>
+          <div class="preview-grid">
+            <div class="preview-card serial-card">
+              <span class="preview-title">串口连接</span>
+              <strong>38400 NMEA 1Hz</strong>
+              <small>自动识别模块输出</small>
             </div>
-          </div>
-        </section>
-
-        <section class="panel scatter-panel">
-          <div class="panel-title">
-            <span>散点图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
-          </div>
-          <div class="scatter-layout">
-            <div class="canvas-wrap">
-              <canvas id="scatterCanvas"></canvas>
+            <div class="preview-card nmea-card">
+              <span class="preview-title">NMEA 数据</span>
+              <code>$GNGGA,064615.00...</code>
+              <code>$GNRMC,064615.00,A...</code>
             </div>
-            <aside class="scatter-controls">
-              <label><input type="radio" name="centerMode" value="mouse" />MouseClick</label>
-              <label><input type="radio" name="centerMode" value="current" checked />CenterToCurrent</label>
-              <label><input type="radio" name="centerMode" value="specified" />SpecifiedCenter</label>
-              <label>Lon:<input id="centerLon" type="text" /></label>
-              <label>Lat:<input id="centerLat" type="text" /></label>
-              <button id="applyCenterButton" disabled>Apply</button>
-              <button id="saveScatterButton">保存</button>
-              <button id="clearScatterButton">清除</button>
-            </aside>
-          </div>
-        </section>
-
-        <section class="panel map-panel">
-          <div class="panel-title">
-            <span>地图视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
-          </div>
-          <div class="map-layout">
-            <form class="position-form">
-              <label>UTC<input id="utcValue" readonly /></label>
-              <label>经度<input id="lonValue" readonly /></label>
-              <label>纬度<input id="latValue" readonly /></label>
-              <label>高程<input id="altValue" readonly /></label>
-              <label>速度<input id="speedValue" readonly /></label>
-              <label>朝向<input id="courseValue" readonly /></label>
-              <label>卫星<input id="satCountValue" readonly /></label>
-              <label>HDOP<input id="hdopValue" readonly /></label>
-              <label>VDOP<input id="vdopValue" readonly /></label>
-              <label>模式<input id="modeValue" readonly /></label>
-            </form>
-            <div class="map-stage">
-              <canvas id="mapCanvas"></canvas>
-              <div class="map-zoom">
-                <button id="zoomInButton">+</button>
-                <button id="zoomOutButton">-</button>
+            <div class="preview-card signal-card">
+              <span class="preview-title">卫星信号</span>
+              <div class="bars" aria-label="信号强度示意">
+                <i style="height: 46%"></i>
+                <i style="height: 72%"></i>
+                <i style="height: 58%"></i>
+                <i style="height: 36%"></i>
               </div>
-              <div class="map-mode">
-                <label><input type="radio" name="mapMode" value="road" checked />Road Map</label>
-                <label><input type="radio" name="mapMode" value="satellite" />Satellite</label>
+              <small>GPS / BDS / GLC</small>
+            </div>
+            <div class="preview-card message-card">
+              <span class="preview-title">消息解析</span>
+              <p><b>GSV</b> 可见卫星信息</p>
+              <p><b>RMC</b> 推荐定位信息</p>
+            </div>
+            <div class="preview-card map-card">
+              <span class="preview-title">地图定位</span>
+              <div class="mini-map">
+                <span class="route"></span>
+                <span class="arrow"></span>
               </div>
+              <small>红色箭头实时定位</small>
+            </div>
+            <div class="preview-card scatter-card">
+              <span class="preview-title">散点分布</span>
+              <div class="scatter-dots">
+                <i></i><i></i><i></i><i></i><i></i>
+              </div>
+              <small>查看定位稳定性</small>
             </div>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
 
-      <aside class="side-toolbox" aria-label="扩展工具">
-        <button>UTC<br />SOW</button>
-        <button>IC</button>
-        <button>IMU</button>
-        <button>Reset</button>
-        <button>BLH<br />XYZ</button>
-        <button>Iono</button>
-        <button>RTCM</button>
-      </aside>
+      <section class="section-band">
+        <div class="section-heading">
+          <p class="eyebrow">Features</p>
+          <h2>客户常用功能</h2>
+        </div>
+        <div class="feature-grid">
+          <article>
+            <img src="./assets/panel-icons/nmea.png" alt="" />
+            <h3>NMEA 视图</h3>
+            <p>显示原始 NMEA 数据和输出频率，便于检查模块实时输出。</p>
+          </article>
+          <article>
+            <img src="./assets/panel-icons/signal.png" alt="" />
+            <h3>信号视图</h3>
+            <p>按卫星系统展示信号强度，辅助判断天线和测试环境。</p>
+          </article>
+          <article>
+            <img src="./assets/panel-icons/message.png" alt="" />
+            <h3>消息视图</h3>
+            <p>按 GGA、GLL、GSA、GSV、RMC、VTG 类型查看解析字段。</p>
+          </article>
+          <article>
+            <img src="./assets/panel-icons/map.png" alt="" />
+            <h3>地图定位</h3>
+            <p>根据有效定位数据显示红色定位箭头，支持拖动和缩放。</p>
+          </article>
+        </div>
+      </section>
 
-      <footer class="status-bar">
-        <div id="connectionState">未连接</div>
-        <div id="logState">日志未保存</div>
-        <div id="sourceState">观测量未输出</div>
-        <div id="debugState">调试log未输出</div>
-        <div class="led" id="statusLed"></div>
-        <div id="fixState">未定位</div>
-        <div id="idleState">空闲</div>
-        <div id="epochState">-1/0</div>
-        <div id="runtimeState">运行时间00:00:00</div>
-      </footer>
-    </div>
+      <section id="requirements" class="info-layout">
+        <div>
+          <p class="eyebrow">Requirements</p>
+          <h2>运行要求</h2>
+          <p>
+            在线访问建议使用 Microsoft Edge 或 Google Chrome。串口连接依赖浏览器 Web Serial API，需要用户授权访问串口设备。
+          </p>
+        </div>
+        <ul class="check-list">
+          <li>推荐浏览器：Microsoft Edge / Google Chrome</li>
+          <li>在线网站：适合客户快速打开和查看说明书</li>
+          <li>本地服务：适合现场串口调试，运行打开GNSS网页版.bat</li>
+          <li>说明书：CORVON GNSS Tool操作说明书v1.0.pdf</li>
+        </ul>
+      </section>
+    </main>
 
-    <script src="./app.js" defer></script>
+    <footer class="site-footer">
+      <span>CORVON TOF</span>
+      <span>网页版上位机 v1.0</span>
+    </footer>
   </body>
 </html>

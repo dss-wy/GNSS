@@ -11,6 +11,7 @@ const mime = {
   ".js": "application/javascript; charset=utf-8",
   ".json": "application/json; charset=utf-8",
   ".txt": "text/plain; charset=utf-8",
+  ".pdf": "application/pdf",
 };
 
 function createServer() {
