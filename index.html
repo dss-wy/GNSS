@@ -3,21 +3,27 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CORVON TOF</title>
+    <meta
+      name="description"
+      content="CORVON GNSS Tool 是面向客户现场调试、模块验证和数据查看的网页版 GNSS 上位机。"
+    />
+    <title>CORVON GNSS</title>
     <link rel="icon" href="./CORVON.ico?v=1" type="image/x-icon" />
     <link rel="shortcut icon" href="./CORVON.ico?v=1" type="image/x-icon" />
-    <link rel="stylesheet" href="./site.css?v=1" />
+    <link rel="stylesheet" href="./site.css?v=3" />
   </head>
   <body>
     <header class="site-header">
-      <a class="brand" href="./index.html" aria-label="CORVON TOF">
+      <a class="brand" href="./index.html" aria-label="CORVON GNSS Tool">
         <img src="./CORVON.ico" alt="" />
-        <span>CORVON TOF</span>
+        <span>CORVON GNSS</span>
       </a>
       <nav class="site-nav" aria-label="网站导航">
-        <a href="./tool.html">网页版上位机</a>
+        <a href="./tool.html">在线工具</a>
         <a href="./CORVON%20GNSS%20Tool%E6%93%8D%E4%BD%9C%E8%AF%B4%E6%98%8E%E4%B9%A6v1.0.pdf">操作说明书</a>
+        <a href="#workflow">客户使用</a>
         <a href="#requirements">运行要求</a>
+        <a href="#publish">发布方式</a>
       </nav>
     </header>
 
@@ -25,13 +31,18 @@
       <section class="hero">
         <div class="hero-content">
           <p class="eyebrow">GNSS Web Console</p>
-          <h1>CORVON TOF</h1>
+          <h1>CORVON GNSS</h1>
           <p class="hero-copy">
-            面向客户现场调试和模块验证的网页版 GNSS 上位机，支持串口连接、NMEA/UBX 数据查看、卫星信号、消息解析、散点图和地图定位。
+            面向客户现场调试、模块验证和数据查看的网页版 RTK 上位机。客户通过浏览器连接串口模块，解析私有协议中的多个移动站坐标，并查看基站状态和地图位置。
           </p>
           <div class="hero-actions">
             <a class="primary-link" href="./tool.html">打开网页版上位机</a>
             <a class="secondary-link" href="./CORVON%20GNSS%20Tool%E6%93%8D%E4%BD%9C%E8%AF%B4%E6%98%8E%E4%B9%A6v1.0.pdf">查看操作说明书</a>
+          </div>
+          <div class="hero-badges" aria-label="网站特性">
+            <span>无需安装客户端</span>
+            <span>支持 GitHub Pages 发布</span>
+            <span>Chrome / Edge 推荐</span>
           </div>
         </div>
         <div class="hero-panel" aria-label="工具能力概览">
@@ -40,35 +51,35 @@
             <span>Web Serial Ready</span>
           </div>
           <div class="metrics">
-            <div><strong>NMEA</strong><span>实时语句</span></div>
-            <div><strong>UBX</strong><span>协议数据</span></div>
-            <div><strong>Map</strong><span>定位视图</span></div>
+            <div><strong>PRIVATE</strong><span>私有协议</span></div>
+            <div><strong>RTK</strong><span>移动站状态</span></div>
+            <div><strong>MAP</strong><span>多基站地图</span></div>
           </div>
           <div class="preview-grid">
             <div class="preview-card serial-card">
               <span class="preview-title">串口连接</span>
-              <strong>38400 NMEA 1Hz</strong>
+              <strong>自动识别波特率</strong>
               <small>自动识别模块输出</small>
             </div>
             <div class="preview-card nmea-card">
-              <span class="preview-title">NMEA 数据</span>
-              <code>$GNGGA,064615.00...</code>
-              <code>$GNRMC,064615.00,A...</code>
+              <span class="preview-title">私有协议数据</span>
+              <code>DF 01 01 01 00 20...</code>
+              <code>SN / RTK / Lon / Lat</code>
             </div>
             <div class="preview-card signal-card">
-              <span class="preview-title">卫星信号</span>
+              <span class="preview-title">移动站卫星数</span>
               <div class="bars" aria-label="信号强度示意">
                 <i style="height: 46%"></i>
                 <i style="height: 72%"></i>
                 <i style="height: 58%"></i>
                 <i style="height: 36%"></i>
               </div>
-              <small>GPS / BDS / GLC</small>
+              <small>按移动站实时更新</small>
             </div>
             <div class="preview-card message-card">
-              <span class="preview-title">消息解析</span>
-              <p><b>GSV</b> 可见卫星信息</p>
-              <p><b>RMC</b> 推荐定位信息</p>
+              <span class="preview-title">移动站解析</span>
+              <p><b>SN</b> 移动站唯一编号</p>
+              <p><b>RTK</b> 定位与在线状态</p>
             </div>
             <div class="preview-card map-card">
               <span class="preview-title">地图定位</span>
@@ -76,7 +87,7 @@
                 <span class="route"></span>
                 <span class="arrow"></span>
               </div>
-              <small>红色箭头实时定位</small>
+              <small>多基站显示，离线自动置灰</small>
             </div>
             <div class="preview-card scatter-card">
               <span class="preview-title">散点分布</span>
@@ -89,7 +100,31 @@
         </div>
       </section>
 
-      <section class="section-band">
+      <section id="workflow" class="section-band">
+        <div class="section-heading">
+          <p class="eyebrow">Customer Workflow</p>
+          <h2>客户使用流程</h2>
+        </div>
+        <div class="step-grid">
+          <article>
+            <span class="step-index">01</span>
+            <h3>打开网站</h3>
+            <p>客户使用 Microsoft Edge 或 Google Chrome 打开 CORVON GNSS 网站，进入在线工具。</p>
+          </article>
+          <article>
+            <span class="step-index">02</span>
+            <h3>连接模块</h3>
+            <p>将 GNSS 模块通过 USB 转串口连接电脑，并在浏览器弹窗中授权访问对应串口。</p>
+          </article>
+          <article>
+            <span class="step-index">03</span>
+            <h3>开始调试</h3>
+            <p>点击打开串口，工具会自动识别常用波特率和输出模式，实时展示定位与报文数据。</p>
+          </article>
+        </div>
+      </section>
+
+      <section class="feature-section">
         <div class="section-heading">
           <p class="eyebrow">Features</p>
           <h2>客户常用功能</h2>
@@ -97,23 +132,23 @@
         <div class="feature-grid">
           <article>
             <img src="./assets/panel-icons/nmea.png" alt="" />
-            <h3>NMEA 视图</h3>
-            <p>显示原始 NMEA 数据和输出频率，便于检查模块实时输出。</p>
+            <h3>原始数据</h3>
+            <p>显示私有协议原始字节和输出频率，便于检查模块实时输出。</p>
           </article>
           <article>
             <img src="./assets/panel-icons/signal.png" alt="" />
-            <h3>信号视图</h3>
-            <p>按卫星系统展示信号强度，辅助判断天线和测试环境。</p>
+            <h3>协议帧</h3>
+            <p>显示帧序号、移动站 SN、定位状态、坐标和校验结果。</p>
           </article>
           <article>
             <img src="./assets/panel-icons/message.png" alt="" />
-            <h3>消息视图</h3>
-            <p>按 GGA、GLL、GSA、GSV、RMC、VTG 类型查看解析字段。</p>
+            <h3>移动站</h3>
+            <p>按 SN 查看多个移动站的定位状态、卫星数、坐标、高度和速度。</p>
           </article>
           <article>
             <img src="./assets/panel-icons/map.png" alt="" />
             <h3>地图定位</h3>
-            <p>根据有效定位数据显示红色定位箭头，支持拖动和缩放。</p>
+            <p>同时显示多个基站位置，未定位或超时的站点保留位置并置灰。</p>
           </article>
         </div>
       </section>
@@ -123,21 +158,40 @@
           <p class="eyebrow">Requirements</p>
           <h2>运行要求</h2>
           <p>
-            在线访问建议使用 Microsoft Edge 或 Google Chrome。串口连接依赖浏览器 Web Serial API，需要用户授权访问串口设备。
+            在线访问建议使用桌面版 Microsoft Edge 或 Google Chrome。串口连接依赖浏览器 Web Serial API，需要 HTTPS 或本地服务环境，并由用户主动授权访问串口设备。
           </p>
         </div>
         <ul class="check-list">
-          <li>推荐浏览器：Microsoft Edge / Google Chrome</li>
-          <li>在线网站：适合客户快速打开和查看说明书</li>
-          <li>本地服务：适合现场串口调试，运行打开GNSS网页版.bat</li>
+          <li>推荐浏览器：桌面版 Microsoft Edge / Google Chrome</li>
+          <li>在线网站：GitHub Pages 使用 HTTPS，适合客户快速打开</li>
+          <li>现场调试：也可以运行本地服务 <code>打开GNSS网页版.bat</code></li>
+          <li>串口权限：浏览器会弹出设备选择框，需要客户手动确认</li>
           <li>说明书：CORVON GNSS Tool操作说明书v1.0.pdf</li>
         </ul>
+      </section>
+
+      <section id="publish" class="publish-band">
+        <div class="publish-content">
+          <p class="eyebrow">GitHub Pages</p>
+          <h2>适合对外发布的静态网站</h2>
+          <p>
+            当前目录已经按静态网站整理：<code>index.html</code> 是 CORVON GNSS 网站首页，<code>tool.html</code> 是网页版上位机。维护人员把更新提交到 GitHub 仓库 <code>main</code> 分支后，客户继续使用同一个网址访问最新版。
+          </p>
+        </div>
+        <div class="publish-list" aria-label="发布文件">
+          <span>index.html</span>
+          <span>tool.html</span>
+          <span>app.js</span>
+          <span>styles.css</span>
+          <span>site.css</span>
+          <span>操作说明书 PDF</span>
+        </div>
       </section>
     </main>
 
     <footer class="site-footer">
-      <span>CORVON TOF</span>
-      <span>网页版上位机 v1.0</span>
+      <span>CORVON GNSS</span>
+      <span>Web GNSS Console v1.0</span>
     </footer>
   </body>
 </html>

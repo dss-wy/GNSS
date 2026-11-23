@@ -34,6 +34,10 @@ jobs:
           cp site.css _site/
           cp styles.css _site/
           cp app.js _site/
+          cp rtk-protocol.js _site/
+          cp .nojekyll _site/
+          mkdir -p _site/资料
+          cp -r 资料/RTK _site/资料/
           cp CORVON.ico _site/
           cp "CORVON GNSS Tool操作说明书v1.0.pdf" _site/
           cp -r assets _site/
@@ -46,3 +50,4 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deploy
         uses: actions/deploy-pages@v4
+

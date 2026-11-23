@@ -3,179 +3,133 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CORVON TOF</title>
+    <title>CORVON RTK Tool</title>
     <link rel="icon" href="./CORVON.ico?v=1" type="image/x-icon" />
     <link rel="shortcut icon" href="./CORVON.ico?v=1" type="image/x-icon" />
-    <link rel="stylesheet" href="./styles.css?v=24" />
+    <link rel="stylesheet" href="./styles.css?v=123" />
   </head>
   <body>
     <div class="app-shell">
       <header class="top-shell">
-        <nav class="menu-tabs" aria-label="主菜单" data-i18n-attr="aria-label:nav.main">
-          <button id="connectionTab" class="menu-tab active" data-i18n="nav.connection">连接</button>
-          <button id="viewTab" class="menu-tab" data-i18n="nav.view" aria-expanded="false">视图</button>
-          <button class="menu-tab" data-i18n="nav.tools">工具</button>
-          <button class="menu-tab" data-i18n="nav.replay">回放</button>
-          <button id="settingsTab" class="menu-tab" data-i18n="nav.settings">设置</button>
-          <button id="helpTab" class="menu-tab" data-i18n="nav.help" aria-expanded="false">帮助</button>
-        </nav>
+        <div class="console-heading">
+          <img src="./CORVON.ico" alt="" />
+          <div>
+            <strong>CORVON GNSS</strong>
+            <span data-i18n="app.subtitle">基站监控</span>
+          </div>
+        </div>
+        <div class="product-title" aria-label="CORVON RTK Tool">CORVON RTK Tool <span>v1.1.0</span></div>
         <div class="tool-strip">
           <div id="connectionTools" class="toolbar-page connection-tools">
             <button id="connectButton" class="primary-action">打开串口</button>
             <label class="field-inline">
               <span data-i18n="toolbar.baudRate">波特率</span>
               <select id="baudRate">
-                <option value="auto" selected data-i18n="toolbar.autoDetect">自动识别</option>
                 <option value="9600">9600</option>
+                <option value="19200">19200</option>
+                <option value="28800">28800</option>
                 <option value="38400">38400</option>
                 <option value="57600">57600</option>
-                <option value="115200">115200</option>
+                <option value="76800">76800</option>
+                <option value="115200" selected>115200</option>
                 <option value="230400">230400</option>
+                <option value="460800">460800</option>
+                <option value="921600">921600</option>
               </select>
             </label>
-            <span id="deviceModeState" class="device-mode-state">模块未识别</span>
-            <button id="restoreDefaultButton" data-i18n="toolbar.restoreDefault">恢复默认输出</button>
-            <button id="pauseButton" data-i18n="toolbar.pause">暂停</button>
-            <button id="loadFileButton" data-i18n="toolbar.loadLog">加载日志</button>
-            <button id="clearButton" data-i18n="toolbar.clear">清空</button>
-            <input id="fileInput" type="file" accept=".txt,.log,.nmea,.csv" />
+            <button id="loadFileButton" data-i18n="toolbar.loadLog" hidden>加载日志</button>
+            <input id="fileInput" type="file" accept=".bin,.hex,.txt,.log" />
           </div>
-          <div id="viewTools" class="toolbar-page view-tools" hidden></div>
-          <div id="helpTools" class="toolbar-page help-tools" hidden>
-            <button id="manualButton" type="button" data-i18n="help.manual">CORVON GNSS Tool手册</button>
+        </div>
+        <div class="header-preferences" aria-label="界面偏好">
+          <div class="language-switch" role="group" data-i18n-attr="aria-label:settings.language">
+            <button id="languageToggleButton" type="button" aria-pressed="false">CN</button>
           </div>
+          <button id="themeToggleButton" class="theme-toggle-button" type="button" data-i18n-attr="title:settings.theme;aria-label:settings.theme" aria-pressed="false">
+            <span class="theme-toggle-icon" aria-hidden="true"></span>
+          </button>
         </div>
       </header>
 
-      <main class="workspace">
+      <nav class="page-menu" aria-label="页面菜单">
+        <button id="monitorMenuButton" class="page-menu-button active" type="button" data-i18n="nav.monitor" aria-current="page">监控</button>
+        <button id="settingsMenuButton" class="page-menu-button" type="button" data-i18n="nav.settings">设置</button>
+        <button id="saveMenuButton" class="page-menu-button" type="button" data-i18n="nav.save">保存</button>
+      </nav>
+
+      <main id="mainWorkspace" class="workspace">
+        <section id="connectionGuide" class="connection-guide" aria-labelledby="connectionGuideTitle">
+          <div class="connection-guide-main">
+            <span class="connection-guide-kicker">CORVON RTK / WEB CONSOLE</span>
+            <h1 id="connectionGuideTitle" data-i18n="guide.title">连接一个 GNSS 设备</h1>
+            <p data-i18n="guide.description">通过USB-TTL接入RTK设备，然后点击连接</p>
+            <button id="guideConnectButton" class="guide-connect-button" type="button"><span data-i18n="guide.connect">连接</span><span aria-hidden="true">→</span></button>
+            <div class="connection-products" aria-label="RTK 产品">
+              <article class="connection-product"><div class="connection-product-image"><img src="./资料/RTK/移动站.png" alt="RTK-11 移动站"></div><strong>RTK-11</strong><span data-i18n="guide.rover">移动站</span></article>
+              <article class="connection-product"><div class="connection-product-image"><img src="./资料/RTK/单天线.png" alt="RTK-11 基站"></div><strong>RTK-11</strong><span data-i18n="guide.baseStation">基站</span></article>
+              <article class="connection-product"><div class="connection-product-image"><img src="./资料/RTK/双天线-1.png" alt="RTK-12 移动站"></div><strong>RTK-12</strong><span data-i18n="guide.rover">移动站</span></article>
+              <article class="connection-product"><div class="connection-product-image"><img src="./资料/RTK/单天线-1.png" alt="RTK-12 基站"></div><strong>RTK-12</strong><span data-i18n="guide.baseStation">基站</span></article>
+              <article class="connection-product"><div class="connection-product-image"><img src="./资料/RTK/移动站-1.png" alt="RTK-13 移动站"></div><strong>RTK-13</strong><span data-i18n="guide.rover">移动站</span></article>
+              <article class="connection-product"><div class="connection-product-image"><img src="./资料/RTK/单天线.png" alt="RTK-13 基站"></div><strong>RTK-13</strong><span data-i18n="guide.baseStation">基站</span></article>
+            </div>
+          </div>
+          <aside class="connection-guide-aside">
+            <h2 data-i18n="guide.steps">连接步骤</h2>
+            <ol>
+              <li><b>01</b><span data-i18n="guide.step1">连接 USB 转串口适配器</span></li>
+              <li><b>02</b><span data-i18n="guide.step2">选择对应 COM 端口</span></li>
+              <li><b>03</b><span data-i18n="guide.step3">等待模块自动识别</span></li>
+            </ol>
+            <div class="connection-guide-status"><span class="guide-status-dot"></span><span id="connectionGuideStatus" data-i18n="guide.waiting">等待设备接入</span></div>
+          </aside>
+        </section>
         <div id="portStatusBanner" class="port-status-banner" role="alert" style="display:none">
           <span class="port-status-icon"></span>
           <span id="portStatusMessage" class="port-status-message"></span>
           <button id="portStatusAction" class="port-status-action" data-i18n="common.retry">重试</button>
         </div>
 
-        <section class="panel nmea-panel">
-          <div class="panel-title">
-            <span data-icon="nmea" data-i18n="panel.nmea">NMEA视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
-          </div>
-          <div class="nmea-output" id="nmeaLog"></div>
-          <div class="send-row">
-            <select id="commandMode" aria-label="发送格式" data-i18n-attr="aria-label:nmea.sendMode">
-              <option value="ascii">ascii</option>
-              <option value="hex">hex</option>
-            </select>
-            <input id="commandInput" type="text" aria-label="发送内容" data-i18n-attr="aria-label:nmea.sendContent" />
-            <button id="sendButton" data-i18n="common.send">发送</button>
-          </div>
-          <div class="nmea-status-row">
-            <span id="nmeaSummary">频率：0 Hz</span>
-          </div>
-        </section>
-
-        <section class="panel satellite-panel">
-          <div class="panel-title">
-            <span data-icon="ubx" data-i18n="panel.ubx">UBX视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
-          </div>
-          <div class="ubx-view">
-            <pre class="ubx-output" id="ubxLog"></pre>
-            <div class="ubx-status-row">
-              <span id="ubxSummary">频率：0 Hz</span>
-              <button id="ubxClearButton" data-i18n="toolbar.clear">清空</button>
-            </div>
-          </div>
-        </section>
-
-        <section class="panel signal-panel">
-          <div class="panel-title">
-            <span data-icon="signal" data-i18n="panel.signal">信号视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
-          </div>
-          <div class="signal-legend" id="signalLegend"></div>
-          <div class="canvas-wrap">
-            <canvas id="signalCanvas"></canvas>
-          </div>
-        </section>
-
         <section class="panel message-panel">
           <div class="panel-title">
-            <span data-icon="message" data-i18n="panel.message">消息视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
+            <span data-icon="message" data-i18n="panel.message">基站</span>
           </div>
           <div class="message-layout">
             <aside class="message-tree">
-              <div class="tree-root">NMEA</div>
-              <button data-type="GGA"><span class="message-type-label" data-i18n="message.type.gga">GGA（全球定位系统定位信息）</span></button>
-              <button data-type="GLL"><span class="message-type-label" data-i18n="message.type.gll">GLL（地理定位-纬度/经度）</span></button>
-              <button data-type="GSA"><span class="message-type-label" data-i18n="message.type.gsa">GSA（当前卫星信息）</span></button>
-              <button data-type="GSV" class="active"><span class="message-type-label" data-i18n="message.type.gsv">GSV（可见卫星信息）</span></button>
-              <button data-type="RMC"><span class="message-type-label" data-i18n="message.type.rmc">RMC（推荐定位信息）</span></button>
-              <button data-type="VTG"><span class="message-type-label" data-i18n="message.type.vtg">VTG（地面航向和地面速度）</span></button>
-              <div class="tree-root muted">ICOE</div>
+              <div class="tree-root">
+                <span data-i18n="station.listTitle">移动站列表</span>
+                <strong id="stationPositionCount" class="station-position-count" data-i18n-attr="title:station.positionedCount;aria-label:station.positionedCount">(0/0)</strong>
+              </div>
+              <div id="mobileStationList" class="mobile-station-list"></div>
             </aside>
             <div id="messageSplitHandle" class="message-splitter" role="separator" aria-orientation="vertical" tabindex="0"></div>
-            <div class="satellite-table-wrap">
+            <div class="satellite-table-wrap station-detail-wrap">
+        <aside id="monitorSummary" class="monitor-summary station-summary-card" data-i18n-attr="aria-label:summary.ariaLabel">
+          <div class="monitor-summary-heading"><span data-i18n="summary.realtime">实时状态</span><span id="summaryConnectionDot" class="summary-dot"></span></div>
+          <div class="summary-state" id="summaryFixState">未定位</div>
+          <div class="summary-device"><img id="summaryDeviceImage" alt="" hidden><div><span data-i18n="summary.identifiedDevice">已识别设备</span><b id="summaryDeviceName">GNSS 模块</b></div></div>
+          <div class="summary-grid">
+            <div><span data-i18n="summary.rovers">移动站</span><b id="summaryStationCount">0</b></div>
+            <div><span data-i18n="summary.online">在线</span><b id="summaryOnlineCount">0</b></div>
+            <div><span data-i18n="map.satellites">卫星</span><b id="summarySatelliteCount">0</b></div>
+            <div><span data-i18n="map.altitude">高度</span><b id="summaryAltitude">--</b></div>
+            <div><span data-i18n="map.lon">经度</span><b id="summaryLon">--</b></div>
+            <div><span data-i18n="map.lat">纬度</span><b id="summaryLat">--</b></div>
+          </div>
+        </aside>
               <div class="message-detail" id="messageDetail"></div>
-              <div class="visible-count"><span data-i18n="message.visibleSatellites">可视卫星数：</span><strong id="visibleSatelliteCount">0</strong></div>
-              <table class="satellite-table">
-                <thead>
-                  <tr>
-                    <th data-i18n="table.system">卫星系统</th>
-                    <th data-i18n="table.prn">卫星号</th>
-                    <th data-i18n="table.elevation">高度角</th>
-                    <th data-i18n="table.azimuth">方位角</th>
-                    <th data-i18n="table.snr">信噪比</th>
-                  </tr>
-                </thead>
-                <tbody id="satelliteRows"></tbody>
-              </table>
+              <section id="stationQueryDiagnostics" class="station-query-diagnostics" aria-live="polite" hidden></section>
             </div>
-          </div>
-        </section>
-
-        <section class="panel scatter-panel">
-          <div class="panel-title">
-            <span data-icon="scatter" data-i18n="panel.scatter">散点图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
-          </div>
-          <div class="scatter-layout">
-            <div class="canvas-wrap">
-              <canvas id="scatterCanvas"></canvas>
-            </div>
-            <aside class="scatter-controls">
-              <label><input type="radio" name="centerMode" value="mouse" />MouseClick</label>
-              <label><input type="radio" name="centerMode" value="current" checked />CenterToCurrent</label>
-              <label><input type="radio" name="centerMode" value="specified" />SpecifiedCenter</label>
-              <label>Lon:<input id="centerLon" type="text" /></label>
-              <label>Lat:<input id="centerLat" type="text" /></label>
-              <button id="applyCenterButton" disabled data-i18n="common.apply">Apply</button>
-              <button id="saveScatterButton" data-i18n="common.save">保存</button>
-              <button id="clearScatterButton" data-i18n="common.clear">清除</button>
-            </aside>
           </div>
         </section>
 
         <section class="panel map-panel">
           <div class="panel-title">
             <span data-icon="map" data-i18n="panel.map">地图视图</span>
-            <div class="window-tools"><button></button><button></button><button></button></div>
           </div>
           <div class="map-layout">
-            <form class="position-form">
-              <label><span data-i18n="map.utc">UTC</span><input id="utcValue" readonly /></label>
-              <label><span data-i18n="map.lon">经度</span><input id="lonValue" readonly /></label>
-              <label><span data-i18n="map.lat">纬度</span><input id="latValue" readonly /></label>
-              <label><span data-i18n="map.altitude">高程</span><input id="altValue" readonly /></label>
-              <label><span data-i18n="map.speed">速度</span><input id="speedValue" readonly /></label>
-              <label><span data-i18n="map.course">朝向</span><input id="courseValue" readonly /></label>
-              <label><span data-i18n="map.satellites">卫星</span><input id="satCountValue" readonly /></label>
-              <label><span data-i18n="map.hdop">HDOP</span><input id="hdopValue" readonly /></label>
-              <label><span data-i18n="map.vdop">VDOP</span><input id="vdopValue" readonly /></label>
-              <label><span data-i18n="map.mode">模式</span><input id="modeValue" readonly /></label>
-            </form>
             <div class="map-stage">
               <canvas id="mapCanvas"></canvas>
+              <div id="mapStationTooltip" class="map-station-tooltip" role="tooltip" hidden></div>
               <div class="map-zoom">
                 <button id="zoomInButton">+</button>
                 <button id="zoomOutButton">-</button>
@@ -185,62 +139,203 @@
                 <label><input type="radio" name="mapMode" value="satellite" /><span data-i18n="map.satellite">Satellite</span></label>
               </div>
             </div>
+            <div class="map-telemetry" data-i18n-attr="aria-label:summary.telemetry">
+              <div><span data-i18n="map.mode">模式</span><b id="telemetryMode">未定位</b></div>
+              <div><span data-i18n="map.lon">经度</span><b id="telemetryLon">--</b></div>
+              <div><span data-i18n="map.lat">纬度</span><b id="telemetryLat">--</b></div>
+              <div><span data-i18n="map.altitude">海拔</span><b id="telemetryAltitude">--</b></div>
+              <div><span data-i18n="map.speed">速度</span><b id="telemetrySpeed">--</b></div>
+              <div><span data-i18n="map.course">航向</span><b id="telemetryCourse">--</b></div>
+            </div>
           </div>
         </section>
+
       </main>
 
-      <aside class="side-toolbox" aria-label="扩展工具" data-i18n-attr="aria-label:side.tools">
-        <button>UTC<br />SOW</button>
-        <button>IC</button>
-        <button>IMU</button>
-        <button id="sideResetButton" data-i18n="side.reset" aria-describedby="resetTooltip">Reset</button>
-        <button>BLH<br />XYZ</button>
-        <button>Iono</button>
-        <button>RTCM</button>
-      </aside>
+      <section id="settingsPage" class="settings-page" aria-label="设置" hidden>
+        <div class="settings-page-content settings-management-grid">
+          <section class="settings-stations-pane">
+            <div class="settings-section-heading">
+              <h2 data-i18n="settings.stationManagement">移动站管理</h2>
+              <button id="settingsAddStationButton" class="settings-add-station" type="button" data-i18n="settings.addStation">添加</button>
+              <span id="settingsStationCount" class="settings-station-count">移动站数量：0</span>
+              <button id="settingsRefreshButton" class="settings-refresh-button" type="button" data-i18n="settings.refresh">刷新</button>
+            </div>
+            <div class="settings-station-table-wrap">
+              <table class="settings-station-table">
+                <thead>
+                  <tr>
+                    <th data-i18n="station.serialNumber">移动站序列号</th>
+                    <th data-i18n="station.status">定位状态</th>
+                    <th data-i18n="station.online">在线状态</th>
+                    <th data-i18n="station.satellites">卫星数</th>
+                    <th data-i18n="map.lon">经度</th>
+                    <th data-i18n="map.lat">纬度</th>
+                    <th data-i18n="map.altitude">高度</th>
+                    <th data-i18n="station.updatedAt">更新时间</th>
+                    <th data-i18n="common.actions">操作</th>
+                  </tr>
+                </thead>
+                <tbody id="settingsStationRows"></tbody>
+              </table>
+              <div id="settingsStationEmpty" class="settings-station-empty" data-i18n="settings.noStations">暂无移动站信息</div>
+            </div>
+            <nav id="settingsStationPagination" class="settings-station-pagination" data-i18n-attr="aria-label:settings.pagination" aria-label="移动站分页"></nav>
+            <div id="baseCommandLogWrap" class="base-command-log-wrap">
+              <div class="base-command-log-heading"><span data-i18n="base.commandLog">通信指令</span><button id="clearBaseCommandLogButton" type="button" data-i18n="common.clear">清除</button></div>
+              <pre id="baseCommandLog" class="base-command-log" data-i18n="base.noCommands">暂无发送指令</pre>
+            </div>
+          </section>
+          <section id="parameterSettingsPane" class="base-parameters-pane" aria-label="参数设置">
+            <div class="settings-section-heading parameter-pane-heading">
+              <div class="parameter-tabs" role="tablist">
+                <button id="baseParameterTabButton" type="button" class="parameter-tab active" role="tab" aria-selected="true" data-i18n="base.title">基站参数</button>
+                <button id="roverParameterTabButton" type="button" class="parameter-tab" role="tab" aria-selected="false" data-i18n="rover.title">移动站参数</button>
+              </div>
+              <button id="queryParametersButton" type="button" class="base-query-button" data-i18n="base.query">查询</button>
+            </div>
+            <form id="baseParametersForm" class="base-parameters-form">
+              <label><span data-i18n="base.sn">基站 SN</span><input id="baseSnInput" type="text" maxlength="8" autocomplete="off" spellcheck="false" /></label>
+              <label><span data-i18n="base.firmware">固件版本</span><input id="baseFirmwareInput" type="text" readonly /></label>
+              <label><span data-i18n="rover.workMode">RTK 工作模式</span><select id="baseWorkModeSelect"><option value="1" data-i18n="rover.mode.convergence">基站-收敛模式</option><option value="2" data-i18n="rover.mode.fixed">基站-固定模式</option></select></label>
+              <label class="base-switch-row"><span data-i18n="base.autoHopping">LoRa 自动跳频</span><input id="baseAutoHoppingInput" type="checkbox" /></label>
+              <label><span data-i18n="base.country">LoRa 国家/地区</span><select id="baseCountrySelect"><option value="0" data-i18n="base.europe">欧洲</option><option value="1" data-i18n="base.usa">美国</option><option value="2" data-i18n="base.australia">澳洲</option></select></label>
+              <label><span data-i18n="base.frequency">LoRa 频段 (MHz)</span><input id="baseFrequencyInput" type="number" min="863" max="928" step="1" /></label>
+              <label><span data-i18n="base.power">LoRa 功率</span><select id="basePowerSelect"><option value="100">100 mW</option><option value="50">50 mW</option><option value="25">25 mW</option></select></label>
+              <div id="baseParameterError" class="base-parameter-error" role="alert" hidden></div>
+              <button id="writeBaseParametersButton" type="submit" class="base-write-button" data-i18n="base.apply">设置参数</button>
+            </form>
+            <figure id="baseRtkImagePanel" class="base-rtk-image-panel" hidden>
+              <img id="baseRtkImage" alt="" />
+              <figcaption id="baseRtkImageCaption"></figcaption>
+            </figure>
+            <form id="roverParametersForm" class="base-parameters-form" hidden>
+              <label><span data-i18n="rover.sn">移动站 SN</span><input id="roverSnInput" type="text" maxlength="8" autocomplete="off" spellcheck="false" /></label>
+              <label><span data-i18n="rover.baseSn">基站 SN</span><input id="roverBaseSnInput" type="text" maxlength="8" autocomplete="off" spellcheck="false" /></label>
+              <label><span data-i18n="base.firmware">固件版本</span><input id="roverFirmwareInput" type="text" readonly /></label>
+              <label><span data-i18n="rover.workMode">RTK 工作模式</span><select id="roverWorkModeSelect"><option value="0" data-i18n="rover.mode.rover">移动站</option><option value="1" data-i18n="rover.mode.convergence">基站-收敛模式</option><option value="2" data-i18n="rover.mode.fixed">基站-固定模式</option></select></label>
+              <label class="base-switch-row"><span data-i18n="base.autoHopping">LoRa 自动跳频</span><input id="roverAutoHoppingInput" type="checkbox" /></label>
+              <label><span data-i18n="base.country">LoRa 国家/地区</span><select id="roverCountrySelect"><option value="0" data-i18n="base.europe">欧洲</option><option value="1" data-i18n="base.usa">美国</option><option value="2" data-i18n="base.australia">澳洲</option></select></label>
+              <label><span data-i18n="base.frequency">LoRa 频段 (MHz)</span><input id="roverFrequencyInput" type="number" min="863" max="928" step="1" /></label>
+              <label><span data-i18n="base.power">LoRa 功率</span><select id="roverPowerSelect"><option value="100">100 mW</option><option value="50">50 mW</option><option value="25">25 mW</option></select></label>
+              <label><span data-i18n="rover.baselineLength">基线长度</span><input id="roverBaselineInput" type="number" min="0" max="65535" step="1" /></label>
+              <div id="roverParameterError" class="base-parameter-error" role="alert" hidden></div>
+              <button id="writeRoverParametersButton" type="submit" class="base-write-button" data-i18n="base.apply">设置参数</button>
+            </form>
+            <figure id="roverRtkImagePanel" class="base-rtk-image-panel" hidden>
+              <img id="roverRtkImage" alt="" />
+              <figcaption id="roverRtkImageCaption"></figcaption>
+            </figure>
+            <div class="parameter-message-log-wrap" aria-live="polite">
+              <div class="parameter-message-log-heading"><span data-i18n="parameter.messageLog">消息栏</span><button id="clearParameterMessageLogButton" type="button" data-i18n="common.clear">清除</button></div>
+              <div id="parameterMessageLog" class="parameter-message-log" data-i18n="parameter.noMessages">暂无消息</div>
+            </div>
+          </section>
+        </div>
+      </section>
 
-      <footer class="status-bar">
+      <section id="savePage" class="save-page" aria-labelledby="savePageTitle" hidden>
+        <header class="save-page-header">
+          <div>
+            <h1 id="savePageTitle" tabindex="-1" data-i18n="save.title">轨迹数据保存</h1>
+            <span id="saveRecordCount" class="save-record-count">轨迹记录：0</span>
+          </div>
+        </header>
+        <div class="save-page-content">
+          <div class="save-controls">
+            <label for="saveStationSelect" data-i18n="save.selectStation">移动站序列号</label>
+            <select id="saveStationSelect"></select>
+            <button id="exportTrackCsvButton" type="button" class="save-export-button" data-i18n="save.exportCsv">导出 CSV</button>
+            <button id="exportSelectedTracksButton" type="button" class="save-export-button" data-i18n="save.exportSelected">导出所选</button>
+          </div>
+          <div id="saveNoTrackData" class="save-no-data" data-i18n="save.noData">暂无已追踪的移动站数据</div>
+          <div class="save-preview-wrap">
+            <table class="save-preview-table">
+              <thead><tr>
+                <th class="save-select-column"><input id="saveSelectAll" type="checkbox" aria-label="全选有轨迹移动站"></th>
+                <th data-i18n="station.serialNumber">移动站序列号</th>
+                <th data-i18n="station.status">定位状态</th>
+                <th data-i18n="station.online">在线状态</th>
+                <th data-i18n="station.satellites">卫星数</th>
+                <th data-i18n="map.lon">经度</th>
+                <th data-i18n="map.lat">纬度</th>
+                <th data-i18n="map.altitude">高度</th>
+                <th data-i18n="map.speed">速度</th>
+                <th data-i18n="station.updatedAt">更新时间</th>
+                <th data-i18n="save.trackCount">轨迹点数</th>
+              </tr></thead>
+              <tbody id="savePreviewRows"></tbody>
+            </table>
+          </div>
+        </div>
+      </section>
+
+      <div id="saveExportToast" class="save-export-toast" role="status" aria-live="polite" hidden></div>
+
+      <div id="addStationBackdrop" class="add-station-backdrop" hidden></div>
+      <section id="addStationDialog" class="add-station-dialog" role="dialog" aria-modal="true" aria-labelledby="addStationDialogTitle" hidden>
+        <form id="addStationForm">
+          <h2 id="addStationDialogTitle" data-i18n="settings.addStationTitle">添加移动站</h2>
+          <label for="addStationSnInput" data-i18n="settings.addStationPrompt">请输入移动站序列号：</label>
+          <input id="addStationSnInput" type="text" autocomplete="off" maxlength="8" inputmode="text" spellcheck="false" placeholder="例如：2F13DA95" aria-describedby="addStationSnError" />
+          <div id="addStationSnError" class="add-station-error" role="alert" hidden></div>
+          <div class="add-station-dialog-actions">
+            <button type="submit" class="add-station-confirm" data-i18n="common.confirm">确定</button>
+            <button id="addStationCancelButton" type="button" data-i18n="common.cancel">取消</button>
+          </div>
+        </form>
+      </section>
+
+      <div id="serialPortBackdrop" class="add-station-backdrop" hidden></div>
+      <section id="serialPortDialog" class="add-station-dialog serial-port-dialog" role="dialog" aria-modal="true" aria-labelledby="serialPortDialogTitle" hidden>
+        <form id="serialPortForm">
+          <h2 id="serialPortDialogTitle">选择串口</h2>
+          <label for="serialPortSelect">可用串口</label>
+          <select id="serialPortSelect" size="6" aria-label="可用串口"></select>
+          <div class="add-station-dialog-actions">
+            <button id="serialPortRefreshButton" type="button">刷新</button>
+            <button type="submit" class="add-station-confirm">连接</button>
+            <button id="serialPortCancelButton" type="button">取消</button>
+          </div>
+        </form>
+      </section>
+
+      <div id="adminAccessBackdrop" class="add-station-backdrop" hidden></div>
+      <section id="adminAccessDialog" class="add-station-dialog admin-access-dialog" role="dialog" aria-modal="true" aria-labelledby="adminAccessDialogTitle" hidden>
+        <form id="adminAccessForm">
+          <h2 id="adminAccessDialogTitle" data-i18n="admin.title">管理员验证</h2>
+          <label for="adminPasswordInput" data-i18n="admin.password">管理员密码</label>
+          <input id="adminPasswordInput" type="password" autocomplete="off" aria-describedby="adminAccessError" />
+          <div id="adminAccessError" class="add-station-error" role="alert" hidden></div>
+          <div class="add-station-dialog-actions">
+            <button id="adminAccessCancelButton" type="button" data-i18n="common.cancel">取消</button>
+            <button type="submit" data-i18n="admin.confirm">进入</button>
+          </div>
+        </form>
+      </section>
+
+      <div id="confirmDialogBackdrop" class="add-station-backdrop" hidden></div>
+      <section id="confirmDialog" class="add-station-dialog confirm-dialog" role="alertdialog" aria-modal="true" aria-labelledby="confirmDialogTitle" aria-describedby="confirmDialogMessage" hidden>
+        <div class="confirm-dialog-content">
+          <h2 id="confirmDialogTitle"></h2>
+          <p id="confirmDialogMessage"></p>
+          <div class="add-station-dialog-actions">
+            <button id="confirmDialogConfirmButton" type="button" class="add-station-confirm" data-i18n="common.confirm">确定</button>
+            <button id="confirmDialogCancelButton" type="button" data-i18n="common.cancel">取消</button>
+          </div>
+        </div>
+      </section>
+
+      <footer class="status-bar" hidden aria-hidden="true">
         <div id="connectionState">未连接</div>
-        <div id="logState" data-i18n="status.logUnsaved">日志未保存</div>
-        <div id="sourceState" data-i18n="status.noObservation">观测量未输出</div>
-        <div id="debugState" data-i18n="status.noDebugLog">调试log未输出</div>
         <div class="led" id="statusLed"></div>
         <div id="fixState" data-i18n="status.noFix">未定位</div>
         <div id="idleState">空闲</div>
-        <div id="epochState">-1/0</div>
         <div id="runtimeState">运行时间00:00:00</div>
       </footer>
     </div>
 
-    <div id="resetTooltip" class="reset-tooltip" role="tooltip" hidden>
-      <div class="reset-tooltip-title" data-i18n="side.resetTitle">恢复默认界面</div>
-      <div class="reset-tooltip-text" data-i18n="side.resetTip">恢复所有视图到默认布局</div>
-    </div>
-
-    <div id="settingsBackdrop" class="settings-backdrop" hidden></div>
-    <section id="settingsDialog" class="settings-dialog" role="dialog" aria-modal="true" aria-labelledby="settingsTitle" hidden>
-      <div class="settings-titlebar">
-        <h2 id="settingsTitle" data-i18n="settings.title">设置</h2>
-        <button id="settingsCloseButton" type="button" class="settings-close" aria-label="关闭" data-i18n-attr="aria-label:common.close">×</button>
-      </div>
-      <div class="settings-body">
-        <div class="settings-group">
-          <div class="settings-label" data-i18n="settings.language">语言</div>
-          <div class="segmented-control" role="group" aria-label="语言" data-i18n-attr="aria-label:settings.language">
-            <button id="languageZhButton" type="button" data-language="zh" data-i18n="settings.languageZh">中文</button>
-            <button id="languageEnButton" type="button" data-language="en" data-i18n="settings.languageEn">English</button>
-          </div>
-        </div>
-        <div class="settings-group">
-          <div class="settings-label" data-i18n="settings.theme">背景</div>
-          <div class="segmented-control" role="group" aria-label="背景" data-i18n-attr="aria-label:settings.theme">
-            <button id="themeLightButton" type="button" data-theme-value="light" data-i18n="settings.light">浅色</button>
-            <button id="themeDarkButton" type="button" data-theme-value="dark" data-i18n="settings.dark">深色</button>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <script src="./app.js?v=23" defer></script>
+    <script src="./rtk-protocol.js?v=11" defer></script>
+    <script src="./app.js?v=133" defer></script>
   </body>
 </html>
